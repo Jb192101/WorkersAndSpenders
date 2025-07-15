@@ -1,0 +1,29 @@
+package org.jedi_bachelor.task;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import org.jedi_bachelor.task.config.CityProperties;
+import org.jedi_bachelor.task.service.SimulationService;
+
+@SpringBootApplication
+public class Main implements CommandLineRunner {
+    @Autowired
+    private SimulationService simulationService;
+
+    @Autowired
+    private CityProperties cityProperties;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        simulationService.startSimulation(cityProperties);
+    }
+
+}
+
