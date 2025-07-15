@@ -8,94 +8,54 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:city.properties")
 @ConfigurationProperties(prefix = "city")
 public class CityProperties {
-    private long dayDuration;
-    private long workerDuration;
-    private long lunchDuration;
-    private int banksCount;
-    private int workersCount;
-    private int spendersCount;
-    private int initialBankMoney;
-    private int initialPersonMoney;
-    private int salary;
-    private int moneyLimit;
+    private static long workDayDuration;
+    private static long workerDuration;
+    private static long lunchDuration;
+    private static int banksCount;
+    private static int workersCount;
+    private static int spendersCount;
+    private static int initialBankMoney;
+    private static int initialCitizenMoney;
+    private static int workerSalary;
+    private static int workerMoneyLimit;
 
-    public long getDayDuration() {
-        return dayDuration;
+    public static long getWorkDayDuration() {
+        return workDayDuration;
     }
 
-    public void setDayDuration(long dayDuration) {
-        this.dayDuration = dayDuration;
-    }
-
-    public long getWorkerDuration() {
+    public static long getWorkerDuration() {
         return workerDuration;
     }
 
-    public void setWorkerDuration(long workerDuration) {
-        this.workerDuration = workerDuration;
-    }
-
-    public long getLunchDuration() {
+    public static long getLunchDuration() {
         return lunchDuration;
     }
 
-    public void setLunchDuration(long lunchDuration) {
-        this.lunchDuration = lunchDuration;
-    }
-
-    public int getBanksCount() {
+    public static int getBanksCount() {
         return banksCount;
     }
 
-    public void setBanksCount(int banksCount) {
-        this.banksCount = banksCount;
-    }
-
-    public int getWorkersCount() {
+    public static int getWorkersCount() {
         return workersCount;
     }
 
-    public void setWorkersCount(int workersCount) {
-        this.workersCount = workersCount;
-    }
-
-    public int getSpendersCount() {
+    public static int getSpendersCount() {
         return spendersCount;
     }
 
-    public void setSpendersCount(int spendersCount) {
-        this.spendersCount = spendersCount;
-    }
-
-    public int getInitialBankMoney() {
+    public static int getInitialBankMoney() {
         return initialBankMoney;
     }
 
-    public void setInitialBankMoney(int initialBankMoney) {
-        this.initialBankMoney = initialBankMoney;
+    public static int getInitialCitizenMoney() {
+        return initialCitizenMoney;
     }
 
-    public int getInitialPersonMoney() {
-        return initialPersonMoney;
+    public static int getWorkerSalary() {
+        return workerSalary;
     }
 
-    public void setInitialPersonMoney(int initialPersonMoney) {
-        this.initialPersonMoney = initialPersonMoney;
-    }
-
-    public int getSalary() {
-        return salary;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
-    public int getMoneyLimit() {
-        return moneyLimit;
-    }
-
-    public void setMoneyLimit(int moneyLimit) {
-        this.moneyLimit = moneyLimit;
+    public static int getWorkerMoneyLimit() {
+        return workerMoneyLimit;
     }
 }

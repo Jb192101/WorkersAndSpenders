@@ -1,93 +1,128 @@
 package org.jedi_bachelor.task.model;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+@Service
 public class HelpDesk {
-    private static volatile HelpDesk instance;
-    private final ConcurrentHashMap<String, Integer> moneyStatistics = new ConcurrentHashMap<>();
-    private final AtomicInteger totalMoney = new AtomicInteger(0);
-    private final Object reportLock = new Object();
+    private static HelpDesk instance;
 
-    private HelpDesk() {
+    private final List<Bank> banks = new ArrayList<>();
+    private final List<Worker> workers = new ArrayList<>();
+    private final List<Spender> spenders = new ArrayList<>();
+
+    private volatile int totalMoney;
+
+    private HelpDesk() {}
+
+    @PostConstruct
+    public void init() {
+        instance = this;
     }
 
     public static HelpDesk getInstance() {
-        if (instance == null) {
-            synchronized (HelpDesk.class) {
-                if (instance == null) {
-                    instance = new HelpDesk();
-                }
-            }
-        }
         return instance;
     }
 
-    public void updateMoneyInfo(String name, int amount) {
-        moneyStatistics.put(name, amount);
+    public synchronized void addBank(Bank bank) {
+        banks.add(bank);
+        totalMoney += bank.getMoney();
     }
 
-    public void updateTotalMoney(int delta) {
-        totalMoney.addAndGet(delta);
+    public synchronized void addWorker(Worker worker) {
+        workers.add(worker);
+        totalMoney += worker.getMoney();
     }
 
-    public void printCurrentReport() {
-        synchronized (reportLock) {
-            System.out.println("\n=== Current City Status ===");
-            System.out.printf("Total money amount in city: %d$\n", totalMoney.get());
+    public synchronized void addSpender(Spender spender) {
+        spenders.add(spender);
+        totalMoney += spender.getMoney();
+    }
 
-            moneyStatistics.forEach((name, amount) ->
-                    System.out.printf("%s has money: %d$\n", name, amount));
+    public synchronized List<Bank> getBanks() {
+        return new ArrayList<>(banks);
+    }
 
-            System.out.println("=========================\n");
+    public synchronized List<Worker> getWorkers() {
+        return new ArrayList<>(workers);
+    }
+
+    public synchronized List<Spender> getSpenders() {
+        return new ArrayList<>(spenders);
+    }
+
+    public synchronized <T> T getRandom(List<T> list) {
+        if (list.isEmpty()) {
+            return null;
+        }
+        int index = ThreadLocalRandom.current().nextInt(list.size());
+        return list.get(index);
+    }
+
+    public synchronized Bank getRandomBank() {
+        return getRandom(banks);
+    }
+
+    public synchronized Worker getRandomWorker() {
+        return getRandom(workers);
+    }
+
+    public synchronized Spender getRandomSpender() {
+        return getRandom(spenders);
+    }
+
+    public synchronized void printInitialStatus() {
+        System.out.printf("Total money amount in city on day start: %d$\n", totalMoney);
+        printStatus();
+    }
+
+    public synchronized void printStatus() {
+        System.out.println("Good news for everyone! Total amount money in city is: " + totalMoney + "$");
+
+        for (Bank bank : banks) {
+            System.out.printf("This %s has money: %d$\n", bank.getName(), bank.getMoney());
+        }
+
+        for (Worker worker : workers) {
+            System.out.printf("This %s has money: %d$\n", worker.getName(), worker.getMoney());
+        }
+
+        for (Spender spender : spenders) {
+            System.out.printf("This %s has money: %d$\n", spender.getName(), spender.getMoney());
         }
     }
 
-    public void printFinalReport() {
-        synchronized (reportLock) {
-            System.out.println("\n=== FINAL REPORT ===");
-            System.out.printf("Total money amount at the end: %d$\n", totalMoney.get());
+    public synchronized void printFinalStatus() {
+        int calculatedTotal = 0;
 
-            int bankMoney = moneyStatistics.entrySet().stream()
-                    .filter(e -> e.getKey().startsWith("Bank-"))
-                    .mapToInt(Map.Entry::getValue)
-                    .sum();
+        for (Bank bank : banks) {
+            calculatedTotal += bank.getMoney();
+        }
 
-            int workerMoney = moneyStatistics.entrySet().stream()
-                    .filter(e -> e.getKey().startsWith("Worker-"))
-                    .mapToInt(Map.Entry::getValue)
-                    .sum();
+        for (Worker worker : workers) {
+            calculatedTotal += worker.getMoney();
+        }
 
-            int spenderMoney = moneyStatistics.entrySet().stream()
-                    .filter(e -> e.getKey().startsWith("Spender-"))
-                    .mapToInt(Map.Entry::getValue)
-                    .sum();
+        for (Spender spender : spenders) {
+            calculatedTotal += spender.getMoney();
+        }
 
-            System.out.printf("Banks total: %d$\n", bankMoney);
-            System.out.printf("Workers total: %d$\n", workerMoney);
-            System.out.printf("Spenders total: %d$\n", spenderMoney);
-            System.out.println("====================\n");
+        System.out.printf("Total money amount in city on day end: %d$\n", calculatedTotal);
+
+        if (calculatedTotal != totalMoney) {
+            System.err.println("WARNING: Money balance violation detected!");
         }
     }
 
-    public void logError(String message, Exception exception) {
-        synchronized (reportLock) {
-            System.err.println("ERROR: " + message);
-            exception.printStackTrace();
-        }
+    public synchronized void updateMoneyBalance(int oldValue, int newValue) {
+        totalMoney += (newValue - oldValue);
     }
 
-    public void logInfo(String message) {
-        synchronized (reportLock) {
-            System.out.println("INFO: " + message);
-        }
-    }
-
-    public void reset() {
-        synchronized (reportLock) {
-            moneyStatistics.clear();
-            totalMoney.set(0);
-        }
+    public synchronized int getTotalMoney() {
+        return totalMoney;
     }
 }

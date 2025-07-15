@@ -1,10 +1,13 @@
 package org.jedi_bachelor.task.model;
 
+import org.jedi_bachelor.task.config.CityProperties;
+import org.jedi_bachelor.task.service.SimulationService;
+
 public class Bank {
     private final String name;
     private int money;
     private volatile boolean isOpen = true;
-    private volatile boolean isBusy = false;
+    private volatile boolean isOnLunch = false;
     private final Object lock = new Object();
 
     public Bank(String name, int initialMoney) {
@@ -12,66 +15,26 @@ public class Bank {
         this.money = initialMoney;
     }
 
-    public synchronized void processClient(Client client) {
-        if (!isOpen) {
-            System.out.printf("%s: Банк закрыт, клиент %s ушел%n", name, client.getName());
-            return;
+    public synchronized void processClient(Client client) throws InterruptedException {
+        while (!isOpen || isOnLunch) {
+            wait();
         }
 
-        try {
-            isBusy = true;
-
-            System.out.printf("%s: Обслуживается клиент %s (баланс клиента: %d)%n",
-                    name, client.getName(), client.getMoney());
-
-            if (client instanceof Worker) {
-                processWorkerDeposit((Worker) client);
-            } else if (client instanceof Spender) {
-                processSpenderLoan((Spender) client);
-            }
-
-            HelpDesk.getInstance().updateMoneyInfo(name, money);
-            HelpDesk.getInstance().updateMoneyInfo(client.getName(), client.getMoney());
-
-        } finally {
-            isBusy = false;
-            synchronized (lock) {
-                lock.notifyAll();
+        if (client instanceof Worker) {
+            Worker worker = (Worker) client;
+            int amount = worker.getMoney();
+            worker.setMoney(0);
+            money += amount;
+        } else if (client instanceof Spender) {
+            Spender spender = (Spender) client;
+            int loanAmount = CityProperties.getInitialCitizenMoney() - spender.getMoney();
+            if (money >= loanAmount) {
+                money -= loanAmount;
+                spender.setMoney(CityProperties.getInitialCitizenMoney());
             }
         }
-    }
 
-    private void processWorkerDeposit(Worker worker) {
-        int amountToDeposit = worker.getMoney();
-        if (amountToDeposit <= 0) {
-            System.out.printf("%s: Работяга %s не имеет денег для вклада%n", name, worker.getName());
-            return;
-        }
-
-        worker.subtractMoney(amountToDeposit);
-        this.money += amountToDeposit;
-
-        System.out.printf("%s: Работяга %s внес депозит %d. Баланс банка: %d%n",
-                name, worker.getName(), amountToDeposit, money);
-    }
-
-    private void processSpenderLoan(Spender spender) {
-        int loanAmount = calculateLoanAmount(spender);
-        if (loanAmount <= 0) {
-            System.out.printf("%s: Банк не может выдать кредит транжире %s%n", name, spender.getName());
-            return;
-        }
-
-        if (this.money < loanAmount) {
-            System.out.printf("%s: Недостаточно средств для кредита транжире %s%n", name, spender.getName());
-            return;
-        }
-
-        this.money -= loanAmount;
-        spender.addMoney(loanAmount);
-
-        System.out.printf("%s: Транжира %s получил кредит %d. Баланс банка: %d%n",
-                name, spender.getName(), loanAmount, money);
+        notifyAll();
     }
 
     private int calculateLoanAmount(Spender spender) {
@@ -85,17 +48,20 @@ public class Bank {
         }
     }
 
-    public boolean isBusy() {
-        return isBusy;
-    }
-
     public void waitUntilAvailable() throws InterruptedException {
         synchronized (lock) {
-            while (isBusy) {
+            while (!isOnLunch) {
                 lock.wait();
             }
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getMoney() {
+        return money;
+    }
 }
 
