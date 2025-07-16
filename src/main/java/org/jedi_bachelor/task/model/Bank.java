@@ -8,10 +8,12 @@ public class Bank {
     private volatile boolean isOpen = true;
     private volatile boolean isOnLunch = false;
     private final Object lock = new Object();
+    private final int initialCitizenMoney;
 
-    public Bank(String name, int initialMoney) {
+    public Bank(String name, int initialMoney, int initCitMoney) {
         this.name = name;
         this.money = initialMoney;
+        this.initialCitizenMoney = initCitMoney;
     }
 
     public synchronized void processClient(Client client) throws InterruptedException {
@@ -26,10 +28,10 @@ public class Bank {
             money += amount;
         } else if (client instanceof Spender) {
             Spender spender = (Spender) client;
-            int loanAmount = CityProperties.getInitialCitizenMoney() - spender.getMoney();
+            int loanAmount = initialCitizenMoney - spender.getMoney();
             if (money >= loanAmount) {
                 money -= loanAmount;
-                spender.setMoney(CityProperties.getInitialCitizenMoney());
+                spender.setMoney(initialCitizenMoney);
             }
         }
 

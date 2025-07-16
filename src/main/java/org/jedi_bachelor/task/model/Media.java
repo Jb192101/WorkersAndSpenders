@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Media implements Runnable {
-    @Value("${city.lunch-duration}")
+    @Value("${city.lunchDuration}")
     private long lunchDuration;
 
     private Thread thread;

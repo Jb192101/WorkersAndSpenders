@@ -1,38 +1,21 @@
 package org.jedi_bachelor.task.factory;
 
+import org.jedi_bachelor.task.config.CityProperties;
 import org.jedi_bachelor.task.model.Worker;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WorkerFactory implements AbstractFactory<Worker> {
-    @Value("${city.initial-person-money}")
-    private int initialMoney;
-    @Value("${city.salary}")
-    private int salary;
-    @Value("${city.money-limit}")
-    private int moneyLimit;
-    @Value("${city.worker-duration}")
-    private int workDuration;
-
-    public void setInitialMoney(int initialMoney) {
-        this.initialMoney = initialMoney;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
-    public void setMoneyLimit(int moneyLimit) {
-        this.moneyLimit = moneyLimit;
-    }
-
-    public void setWorkDuration(int workDuration) {
-        this.workDuration = workDuration;
-    }
+    @Autowired
+    private CityProperties cityProperties;
 
     @Override
     public Worker create(String name) {
-        return new Worker(name, initialMoney, salary, moneyLimit, workDuration);
+        return new Worker(name,
+                cityProperties.getInitialCitizenMoney(),
+                cityProperties.getWorkerSalary(),
+                cityProperties.getWorkerMoneyLimit(),
+                cityProperties.getWorkerDuration());
     }
 }

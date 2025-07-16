@@ -3,8 +3,12 @@ package org.jedi_bachelor.task.model;
 import org.jedi_bachelor.task.config.CityProperties;
 
 public class Spender extends Person {
-    public Spender(String name, int initialMoney) {
+    private int salary;
+
+
+    public Spender(String name, int initialMoney, int salary) {
         super(name, initialMoney);
+        this.salary = salary;
     }
 
     @Override
@@ -24,9 +28,7 @@ public class Spender extends Person {
                 Worker worker = selectRandomWorker();
                 if (worker != null) {
                     try {
-                        if (worker.isAvailable()) {
-                            worker.workFor(this);
-                        }
+                        worker.workFor(this);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
@@ -44,9 +46,9 @@ public class Spender extends Person {
     }
 
     public int paySalary() {
-        if (money >= CityProperties.getWorkerSalary()) {
-            money -= CityProperties.getWorkerSalary();
-            return CityProperties.getWorkerSalary();
+        if (money >= salary) {
+            money -= salary;
+            return salary;
         }
         return 0;
     }

@@ -1,10 +1,10 @@
 package org.jedi_bachelor.task.service;
 
+import org.jedi_bachelor.task.config.CityProperties;
 import org.jedi_bachelor.task.model.HelpDesk;
 import org.jedi_bachelor.task.model.Spender;
 import org.jedi_bachelor.task.model.Worker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,9 +16,8 @@ public class SimulationService {
     private CityService cityService;
     @Autowired
     private HelpDesk helpDesk;
-
-    @Value("${city.worker-duration}")
-    private long workDayDuration;
+    @Autowired
+    private CityProperties cityProperties;
 
     public void startSimulation() throws InterruptedException {
         cityService.createCity();
@@ -39,7 +38,7 @@ public class SimulationService {
             spenderThread.start();
         }
 
-        Thread.sleep(workDayDuration);
+        Thread.sleep(cityProperties.getWorkDayDuration());
 
         for (Thread thread : threads) {
             thread.interrupt();

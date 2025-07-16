@@ -3,10 +3,10 @@ package org.jedi_bachelor.task.model;
 public class Worker extends Person {
     private final int salary;
     private final int moneyLimit;
-    private final int workDuration;
+    private final long workDuration;
     private volatile boolean isWorking = false;
 
-    public Worker(String name, int initialMoney, int salary, int moneyLimit, int workDuration) {
+    public Worker(String name, int initialMoney, int salary, int moneyLimit, long workDuration) {
         super(name, initialMoney);
         this.salary = salary;
         this.moneyLimit = moneyLimit;
@@ -17,6 +17,7 @@ public class Worker extends Person {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             if (this.money >= moneyLimit) {
+                isWorking = true;
                 Bank bank = selectRandomBank();
                 if (bank != null) {
                     try {
@@ -26,6 +27,7 @@ public class Worker extends Person {
                         break;
                     }
                 }
+                isWorking = false;
             }
 
             try {
@@ -42,6 +44,10 @@ public class Worker extends Person {
     }
 
     public synchronized void workFor(Spender spender) throws InterruptedException {
+        if(isWorking) {
+            wait();
+        }
+
         isWorking = true;
         try {
             Thread.sleep(workDuration);
