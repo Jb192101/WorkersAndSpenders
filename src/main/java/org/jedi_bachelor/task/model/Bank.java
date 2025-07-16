@@ -1,7 +1,6 @@
 package org.jedi_bachelor.task.model;
 
 import org.jedi_bachelor.task.config.CityProperties;
-import org.jedi_bachelor.task.service.SimulationService;
 
 public class Bank {
     private final String name;

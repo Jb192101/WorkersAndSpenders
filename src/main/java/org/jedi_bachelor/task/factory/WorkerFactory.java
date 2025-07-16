@@ -1,11 +1,8 @@
 package org.jedi_bachelor.task.factory;
 
-import org.jedi_bachelor.task.model.Bank;
 import org.jedi_bachelor.task.model.Worker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class WorkerFactory implements AbstractFactory<Worker> {
@@ -15,7 +12,8 @@ public class WorkerFactory implements AbstractFactory<Worker> {
     private int salary;
     @Value("${city.money-limit}")
     private int moneyLimit;
-    private List<Bank> banks;
+    @Value("${city.worker-duration}")
+    private int workDuration;
 
     public void setInitialMoney(int initialMoney) {
         this.initialMoney = initialMoney;
@@ -29,12 +27,12 @@ public class WorkerFactory implements AbstractFactory<Worker> {
         this.moneyLimit = moneyLimit;
     }
 
-    public void setBanks(List<Bank> banks) {
-        this.banks = banks;
+    public void setWorkDuration(int workDuration) {
+        this.workDuration = workDuration;
     }
 
     @Override
     public Worker create(String name) {
-        return new Worker(name, initialMoney, salary, moneyLimit, banks);
+        return new Worker(name, initialMoney, salary, moneyLimit, workDuration);
     }
 }

@@ -17,12 +17,24 @@ public class CityService {
     @Autowired
     private SpenderFactory spenderFactory;
 
-    @Value("${city.banksCount}")
+    @Value("${city.banks-count}")
     private int banksCount;
-    @Value("${city.workersCount}")
+    @Value("${city.workers-count}")
     private int workersCount;
-    @Value("${city.spendersCount}")
+    @Value("${city.spenders-count}")
     private int spendersCount;
+
+    public void setBanksCount(int banksCount) {
+        this.banksCount = banksCount;
+    }
+
+    public void setWorkersCount(int workersCount) {
+        this.workersCount = workersCount;
+    }
+
+    public void setSpendersCount(int spendersCount) {
+        this.spendersCount = spendersCount;
+    }
 
     public void createCity() {
         HelpDesk helpDesk = HelpDesk.getInstance();

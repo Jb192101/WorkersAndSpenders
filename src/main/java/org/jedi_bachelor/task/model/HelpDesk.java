@@ -71,10 +71,6 @@ public class HelpDesk {
         return getRandom(workers);
     }
 
-    public synchronized Spender getRandomSpender() {
-        return getRandom(spenders);
-    }
-
     public synchronized void printInitialStatus() {
         System.out.printf("Total money amount in city on day start: %d$\n", totalMoney);
         printStatus();
@@ -116,13 +112,5 @@ public class HelpDesk {
         if (calculatedTotal != totalMoney) {
             System.err.println("WARNING: Money balance violation detected!");
         }
-    }
-
-    public synchronized void updateMoneyBalance(int oldValue, int newValue) {
-        totalMoney += (newValue - oldValue);
-    }
-
-    public synchronized int getTotalMoney() {
-        return totalMoney;
     }
 }
