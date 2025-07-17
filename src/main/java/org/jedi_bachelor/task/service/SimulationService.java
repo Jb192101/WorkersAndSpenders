@@ -1,7 +1,9 @@
 package org.jedi_bachelor.task.service;
 
+import org.jedi_bachelor.task.Main;
 import org.jedi_bachelor.task.config.CityProperties;
 import org.jedi_bachelor.task.model.HelpDesk;
+import org.jedi_bachelor.task.model.Media;
 import org.jedi_bachelor.task.model.Spender;
 import org.jedi_bachelor.task.model.Worker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,13 @@ public class SimulationService {
     private HelpDesk helpDesk;
     @Autowired
     private CityProperties cityProperties;
+    @Autowired
+    private Media media;
 
     public void startSimulation() throws InterruptedException {
         cityService.createCity();
 
-        helpDesk.printInitialStatus();
+        media.printInitialStatus();
 
         List<Thread> threads = new ArrayList<>();
 
@@ -48,7 +52,6 @@ public class SimulationService {
             thread.join();
         }
 
-        helpDesk.printStatus();
-        helpDesk.printFinalStatus();
+        media.printFinalStatus();
     }
 }

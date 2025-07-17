@@ -1,7 +1,5 @@
 package org.jedi_bachelor.task.model;
 
-import org.jedi_bachelor.task.config.CityProperties;
-
 public class Bank {
     private final String name;
     private int money;
@@ -28,33 +26,14 @@ public class Bank {
             money += amount;
         } else if (client instanceof Spender) {
             Spender spender = (Spender) client;
-            int loanAmount = initialCitizenMoney - spender.getMoney();
+            int loanAmount = Math.abs(spender.getSalary() - initialCitizenMoney);
             if (money >= loanAmount) {
                 money -= loanAmount;
-                spender.setMoney(initialCitizenMoney);
+                spender.addMoney(loanAmount);
             }
         }
 
         notifyAll();
-    }
-
-    private int calculateLoanAmount(Spender spender) {
-        return Math.max(10, 100 - spender.getMoney());
-    }
-
-    public void stop() {
-        isOpen = false;
-        synchronized (lock) {
-            lock.notifyAll();
-        }
-    }
-
-    public void waitUntilAvailable() throws InterruptedException {
-        synchronized (lock) {
-            while (!isOnLunch) {
-                lock.wait();
-            }
-        }
     }
 
     public String getName() {

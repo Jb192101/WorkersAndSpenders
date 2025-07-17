@@ -4,6 +4,7 @@ import org.jedi_bachelor.task.factory.BankFactory;
 import org.jedi_bachelor.task.factory.SpenderFactory;
 import org.jedi_bachelor.task.factory.WorkerFactory;
 
+import org.jedi_bachelor.task.model.Media;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,11 @@ public class AppConfig {
     @Bean
     public SpenderFactory spenderFactory() {
         return new SpenderFactory();
+    }
+
+    @Bean
+    public Media media() {
+        return new Media();
     }
 
     @Bean

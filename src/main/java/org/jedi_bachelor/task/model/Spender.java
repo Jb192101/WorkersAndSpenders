@@ -1,20 +1,19 @@
 package org.jedi_bachelor.task.model;
 
-import org.jedi_bachelor.task.config.CityProperties;
-
 public class Spender extends Person {
     private int salary;
+    private Media media;
 
-
-    public Spender(String name, int initialMoney, int salary) {
+    public Spender(String name, int initialMoney, int salary, Media media) {
         super(name, initialMoney);
+        this.media = media;
         this.salary = salary;
     }
 
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            if (this.money <= 0) {
+            if (this.money < this.salary) {
                 Bank bank = selectRandomBank();
                 if (bank != null) {
                     try {
@@ -43,6 +42,7 @@ public class Spender extends Person {
                 break;
             }
         }
+        media.printStopThread(this.getName());
     }
 
     public int paySalary() {
@@ -59,5 +59,9 @@ public class Spender extends Person {
 
     private Bank selectRandomBank() {
         return HelpDesk.getInstance().getRandomBank();
+    }
+
+    public int getSalary() {
+        return this.salary;
     }
 }

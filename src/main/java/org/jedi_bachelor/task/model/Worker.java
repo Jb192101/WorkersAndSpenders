@@ -1,16 +1,16 @@
 package org.jedi_bachelor.task.model;
 
 public class Worker extends Person {
-    private final int salary;
     private final int moneyLimit;
     private final long workDuration;
     private volatile boolean isWorking = false;
+    private Media media;
 
-    public Worker(String name, int initialMoney, int salary, int moneyLimit, long workDuration) {
+    public Worker(String name, int initialMoney, int moneyLimit, long workDuration, Media media) {
         super(name, initialMoney);
-        this.salary = salary;
         this.moneyLimit = moneyLimit;
         this.workDuration = workDuration;
+        this.media = media;
     }
 
     @Override
@@ -37,10 +37,8 @@ public class Worker extends Person {
                 break;
             }
         }
-    }
 
-    public synchronized boolean isAvailable() {
-        return !isWorking;
+        media.printStopThread(this.getName());
     }
 
     public synchronized void workFor(Spender spender) throws InterruptedException {

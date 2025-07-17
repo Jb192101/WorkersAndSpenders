@@ -6,7 +6,6 @@ import org.jedi_bachelor.task.factory.SpenderFactory;
 import org.jedi_bachelor.task.factory.WorkerFactory;
 import org.jedi_bachelor.task.model.HelpDesk;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
