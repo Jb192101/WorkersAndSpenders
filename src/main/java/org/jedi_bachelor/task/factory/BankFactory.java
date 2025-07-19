@@ -11,10 +11,16 @@ public class BankFactory implements AbstractFactory<Bank> {
     @Autowired
     private CityProperties cityProperties;
 
+    @Autowired
+    private Media media;
+
     @Override
     public Bank create(String name) {
         return new Bank(name,
                 cityProperties.getInitialBankMoney(),
-                cityProperties.getInitialCitizenMoney());
+                cityProperties.getInitialCitizenMoney(),
+                cityProperties.getLunchDuration(),
+                cityProperties.getWorkerDuration(),
+                media);
     }
 }

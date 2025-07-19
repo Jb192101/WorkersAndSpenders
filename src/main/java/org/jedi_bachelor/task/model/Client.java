@@ -7,11 +7,5 @@ public interface Client {
 
     void addMoney(int amount);
 
-    void subtractMoney(int amount) throws IllegalArgumentException;
-
     String getName();
-
-    boolean isActive();
-
-    void stop();
 }

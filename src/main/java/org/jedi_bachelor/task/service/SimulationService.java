@@ -1,11 +1,11 @@
 package org.jedi_bachelor.task.service;
 
-import org.jedi_bachelor.task.Main;
 import org.jedi_bachelor.task.config.CityProperties;
 import org.jedi_bachelor.task.model.HelpDesk;
 import org.jedi_bachelor.task.model.Media;
 import org.jedi_bachelor.task.model.Spender;
 import org.jedi_bachelor.task.model.Worker;
+import org.jedi_bachelor.task.model.Bank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,12 @@ public class SimulationService {
         media.printInitialStatus();
 
         List<Thread> threads = new ArrayList<>();
+
+        for(Bank bank : helpDesk.getBanks()) {
+            Thread bankThread = new Thread(bank);
+            threads.add(bankThread);
+            bankThread.start();
+        }
 
         for (Worker worker : helpDesk.getWorkers()) {
             Thread workerThread = new Thread(worker);
